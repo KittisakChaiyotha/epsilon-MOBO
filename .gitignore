@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+demo_training_data/
+demo_results/
+demo_summary.txt
+demo_summary.csv
+demo_timing.txt
+.DS_Store
