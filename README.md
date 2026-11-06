@@ -197,3 +197,9 @@ the timing calculations without requiring a full optimization run.
 
 Prevents generated results, local environments and Python cache files from
 being included in the repository.
+
+---
+
+## Saved-result audit status
+
+The [reproducibility folder](reproducibility/README.md) contains the preserved modified car cab evaluator and scripts for checking selected saved-result summaries. Run-level data and the verified final experiment runner have not yet been published there. The KNO1 demonstration in this README remains separate from the full manuscript experiment.
