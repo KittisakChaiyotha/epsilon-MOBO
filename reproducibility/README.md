@@ -1,14 +1,18 @@
 # Reproducibility status for the ε-MOBO manuscript
 
-This folder contains the archived modified car cab objective evaluator and two scripts for checking saved-result summaries. It is separate from the small KNO1 demonstration in the repository root. It is **not a complete release of the full experiment**.
+This folder contains the archived modified car cab objective evaluator, two scripts for checking saved-result summaries, and a [nine-problem fresh benchmark rerun](benchmark/FRESH_EXPERIMENT.md). It is separate from the small KNO1 demonstration in the repository root. It is **not a complete release of the historical experiment**.
 
-## Files presently in this branch
+## Files
 
 | Path | Purpose |
 | --- | --- |
 | `car_cab/re91_problem.py` | Preserved application evaluator, reproduced in Supplementary Section S3. It contains the actual `0.00087570001` coefficient in the third objective, stochastic latent inputs and nominal assessment. |
 | `car_cab/recompute_table5.py` | Recomputes the eight-method Table 5 average ranks, means and Holm-adjusted W/T/L if the matching per-run final-HV CSV is supplied locally. |
 | `benchmark/recompute_matched_family.py` | Recomputes the criterion-matched W/T/L rows of manuscript Table 1 if the matching benchmark family final-HV CSV is supplied locally. |
+| `benchmark/test_functions.py` | Archived definitions, domains and dimensions of all nine benchmark functions. |
+| `benchmark/run_full_experiment.py` | Runs a new 118-method, nine-problem, q=1,2,4 study with 20 paired repetitions using the public method implementation. |
+| `benchmark/summarize_full_experiment.py` | Computes new-run reporting references and final HV from a complete raw-observation archive. |
+| `benchmark/FRESH_EXPERIMENT.md` | Commands, protocol, and the differences from reproducing the saved manuscript study. |
 
 **The run-level CSV inputs are not published here yet.** Do not cite this folder as a complete replication package or imply that the demo produces the numerical tables and figures of the manuscript.
 
@@ -30,6 +34,6 @@ The manuscript records Python 3.12.7, NumPy 1.26.4, SciPy 1.11.3 and pandas 2.3.
 
 ## Remaining materials for a full release
 
-The final benchmark experiment runner, verified sequential-HVC source and mapping to the saved results, full benchmark objective observations and both sets of numerical reporting reference points, complete configurations and seed/manifest records, representative trajectories, application raw observations, all final run-level metrics and every analysis/figure script still need to be packaged and released with a stable identifier. An earlier runner that uses top-q HVC must not be represented as the final sequential-HVC experiment runner.
+The verified **historical** benchmark experiment runner and its mapping to the saved results, full benchmark objective observations and both sets of numerical reporting reference points, complete original configurations and seed/manifest records, representative trajectories, application raw observations, all original final run-level metrics and every analysis/figure script still need to be packaged and released with a stable identifier. The fresh runner above does not close that provenance gap. An earlier runner that uses top-q HVC must not be represented as the final sequential-HVC experiment runner.
 
 Reporting-HV references must be preserved as used for the published results. Substituting convenient integer references would require recomputing HV and all dependent comparisons; it is not a display-only change.
