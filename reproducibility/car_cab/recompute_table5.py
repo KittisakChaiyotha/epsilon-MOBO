@@ -37,6 +37,8 @@ def holm_adjust(p_values: list[float]) -> np.ndarray:
 
 
 def main() -> None:
+    if not CSV.exists():
+        raise SystemExit(f"Missing saved final-HV data: {CSV}. See reproducibility/README.md")
     data = pd.read_csv(CSV)
     if len(data) != 3360 or data.duplicated(["q", "method_id", "rep"]).any():
         raise ValueError("Expected 3,360 unique method/q/repetition records")
