@@ -55,12 +55,8 @@ pooled nondominated observations across q and repetitions using the formula
 in the manuscript; no convenient integer reference is substituted. Outputs
 are **new-run** HV, never the archived manuscript values.
 
-## Remaining provenance gap
+## Scope of this run
 
-Neither this fresh runner nor the older `recompute_matched_family.py` script
-establishes that the historical q=1,2,4 computations used precisely this
-runner. The verified final sequential-HVC runner snapshot, exact configurations
-and seed mapping, complete/failed-job manifest, raw objective observations,
-reference points for both archives, run-level final-HV data, and figure scripts
-are still needed to reproduce the reported numerical study. The rerun can
-produce new observations, but it cannot retroactively verify the saved results.
+These commands generate and analyze a new benchmark run. The full grid has not
+been executed in this repository, so the resulting HV values must be reported
+as new-run results rather than as the manuscript's saved numerical results.
