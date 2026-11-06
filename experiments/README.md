@@ -1,6 +1,8 @@
-# Reproducibility status for the ε-MOBO manuscript
+# Experiments for the ε-MOBO manuscript
 
-This folder contains the archived modified car cab objective evaluator, two scripts for checking saved-result summaries, and a [nine-problem fresh benchmark rerun](benchmark/FRESH_EXPERIMENT.md). It is separate from the small KNO1 demonstration in the repository root. It is **not a complete release of the historical experiment**.
+This folder has two purposes: (1) run a **new** nine-problem benchmark grid using the public method implementation, and (2) inspect selected **saved** manuscript summaries when their original result files are supplied locally. It also includes the modified car cab objective evaluator. The small KNO1 demonstration in the repository root uses different settings. This folder is **not a complete release of the historical experiment**, and a fresh rerun must not be presented as reproduction of the saved results.
+
+To run the fresh grid, follow [benchmark/FRESH_EXPERIMENT.md](benchmark/FRESH_EXPERIMENT.md). It covers 118 method configurations, q=1,2,4, 20 paired repetitions, 150 evaluations, and archive-specific HV post-processing. This is computationally expensive; the default command enumerates 63,720 tasks, and the full grid has not been executed in this repository.
 
 ## Files
 
@@ -16,7 +18,11 @@ This folder contains the archived modified car cab objective evaluator, two scri
 
 **The run-level CSV inputs are not published here yet.** Do not cite this folder as a complete replication package or imply that the demo produces the numerical tables and figures of the manuscript.
 
-## Data inputs and commands
+## Checking saved manuscript summaries
+
+The following two scripts require their matching saved result files; the fresh runner above does not create those historical inputs.
+
+### Data inputs and commands
 
 The scripts expect the following local files beside them:
 
@@ -26,8 +32,8 @@ The scripts expect the following local files beside them:
 With the matching saved data present, use Python with NumPy, pandas and SciPy:
 
 ```bash
-python reproducibility/benchmark/recompute_matched_family.py
-python reproducibility/car_cab/recompute_table5.py
+python experiments/benchmark/recompute_matched_family.py
+python experiments/car_cab/recompute_table5.py
 ```
 
 The manuscript records Python 3.12.7, NumPy 1.26.4, SciPy 1.11.3 and pandas 2.3.3 for its analyses. The benchmark script applies Holm correction within each problem/family/q panel of 42 (qPOTS or UCB) or 21 (TSEMO) tests. The application script ranks eight methods within each of 20 paired repetitions at each q, then applies Holm correction over the 28 pairwise tests within that q. Both scripts check the expected record counts and pairings.
