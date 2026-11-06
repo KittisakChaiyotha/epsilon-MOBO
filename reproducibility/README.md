@@ -1,32 +1,35 @@
-# Saved-result audit for the ε-MOBO manuscript
+# Reproducibility status for the ε-MOBO manuscript
 
-This folder makes **part of the saved numerical evidence** independently checkable. It is separate from the small KNO1 demonstration in the repository root. Neither program here reruns Bayesian optimization or regenerates every figure in the manuscript.
+This folder contains the archived modified car cab objective evaluator and two scripts for checking saved-result summaries. It is separate from the small KNO1 demonstration in the repository root. It is **not a complete release of the full experiment**.
 
-## Contents
+## Files presently in this branch
 
-| Path | Scope |
+| Path | Purpose |
 | --- | --- |
-| `benchmark/family_final_hv_20reps.csv.gz` | 58,320 run-level final-HV values: 108 methods × 9 problems × 3 batch sizes × 20 paired repetitions. These are the saved **family archive** values under its reporting reference points. |
-| `benchmark/recompute_matched_family.py` | Recomputes the criterion-matched W/T/L rows of manuscript Table 1 with the original problem–family–batch Holm panels. |
-| `car_cab/re91_problem.py` | Preserved modified application evaluator (also reproduced in Supplementary Section S3), including the coefficient `0.00087570001` in the third objective and the stochastic and nominal evaluation methods. |
-| `car_cab/final_hv_runs.csv.gz` | Final nominal HV for all 3,360 saved application runs: 56 method configurations × 3 batch sizes × 20 paired repetitions. The exported columns are `q`, `method_id`, `rep`, `n_points` and `final_hv`. |
-| `car_cab/recompute_table5.py` | Recomputes the eight-method Table 5 average ranks, means and Holm-adjusted W/T/L at each batch size from the saved final HV. |
+| `car_cab/re91_problem.py` | Preserved application evaluator, reproduced in Supplementary Section S3. It contains the actual `0.00087570001` coefficient in the third objective, stochastic latent inputs and nominal assessment. |
+| `car_cab/recompute_table5.py` | Recomputes the eight-method Table 5 average ranks, means and Holm-adjusted W/T/L if the matching per-run final-HV CSV is supplied locally. |
+| `benchmark/recompute_matched_family.py` | Recomputes the criterion-matched W/T/L rows of manuscript Table 1 if the matching benchmark family final-HV CSV is supplied locally. |
 
-The application observations were checked in the archived post-processing against the modified evaluator: stochastic outcomes and nominal outcomes were reproduced from the saved designs and latent draws. The CSV here retains final HV rather than all of those raw observations. The archive does **not** establish whether the same run-level observations were used in the separate family and representative benchmark archives.
+**The run-level CSV inputs are not published here yet.** Do not cite this folder as a complete replication package or imply that the demo produces the numerical tables and figures of the manuscript.
 
-## Check the manuscript summaries
+## Data inputs and commands
 
-Use Python with NumPy, pandas and SciPy. The manuscript records Python 3.12.7, NumPy 1.26.4, SciPy 1.11.3 and pandas 2.3.3 for the analyses. From the repository root, run:
+The scripts expect the following local files beside them:
+
+- `car_cab/final_hv_runs.csv.gz`: columns `q`, `method_id`, `rep`, `n_points`, `final_hv`; 3,360 saved application rows (56 method configurations × 3 batch sizes × 20 repetitions). Each method/q has repetition indices 0–19 and 326 evaluated designs.
+- `benchmark/family_final_hv_20reps.csv.gz`: columns `problem`, `q`, `family`, `structure`, `method`, `epsilon`, `is_baseline`, `rep`, `final_hv`; 58,320 run-level final-HV values from the 108-method family archive across nine problems and three batch sizes.
+
+With the matching saved data present, use Python with NumPy, pandas and SciPy:
 
 ```bash
 python reproducibility/benchmark/recompute_matched_family.py
 python reproducibility/car_cab/recompute_table5.py
 ```
 
-The first command prints 15 criterion-matched Table 1 rows. The second prints eight methods at each of q = 1, 2 and 4, with average rank computed from 20 paired repetition blocks (lower is better), `1000_mean_final_hv`, W/T/L and Net. The original Table 5 W/T/L panel uses all 28 pairs within each q and a two-sided Wilcoxon signed-rank test with Holm correction. Each script checks the record counts and pairing before computing its summaries.
+The manuscript records Python 3.12.7, NumPy 1.26.4, SciPy 1.11.3 and pandas 2.3.3 for its analyses. The benchmark script applies Holm correction within each problem/family/q panel of 42 (qPOTS or UCB) or 21 (TSEMO) tests. The application script ranks eight methods within each of 20 paired repetitions at each q, then applies Holm correction over the 28 pairwise tests within that q. Both scripts check the expected record counts and pairings.
 
-**Reporting reference points are not selection references.** The benchmark family values above use their original reporting reference points. The representative benchmark archive uses a separately pooled reference, and the full numerical family reference vectors are not recovered from this final-HV-only CSV. Replacing either reference with convenient integer values would change HV and require recalculation of downstream results.
+## Remaining materials for a full release
 
-## Remaining release materials
+The final benchmark experiment runner, verified sequential-HVC source and mapping to the saved results, full benchmark objective observations and both sets of numerical reporting reference points, complete configurations and seed/manifest records, representative trajectories, application raw observations, all final run-level metrics and every analysis/figure script still need to be packaged and released with a stable identifier. An earlier runner that uses top-q HVC must not be represented as the final sequential-HVC experiment runner.
 
-The full experimental reproducibility release still requires the final benchmark runner (including its verified sequential-HVC implementation and mapping to saved results), all benchmark objective observations and both sets of numerical reporting references, complete configurations and seed/manifest records, the representative trajectories, application raw observations and scripts for every published table and figure. Earlier runner copies must not be presented as the final runner without verification. The manuscript's code-availability statement describes this full release as forthcoming.
+Reporting-HV references must be preserved as used for the published results. Substituting convenient integer references would require recomputing HV and all dependent comparisons; it is not a display-only change.
