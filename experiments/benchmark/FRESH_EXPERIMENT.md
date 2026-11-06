@@ -23,14 +23,14 @@ hashes. It fails instead of quietly substituting a random acquisition step.
 Install the repository requirements and inspect the grid:
 
 ```bash
-python reproducibility/benchmark/run_full_experiment.py --list-tasks
-python reproducibility/benchmark/run_full_experiment.py --list-methods
+python experiments/benchmark/run_full_experiment.py --list-tasks
+python experiments/benchmark/run_full_experiment.py --list-methods
 ```
 
 A small **new** run (not a manuscript check):
 
 ```bash
-python reproducibility/benchmark/run_full_experiment.py \
+python experiments/benchmark/run_full_experiment.py \
   --problem kno1 --q 1 --method-key qpots --rep 0 \
   --total-evals 23 --population 12 --generations 2 \
   --output-root scratch_check
@@ -43,9 +43,9 @@ Do not mix smoke-run output with full-run output. On the complete archive,
 derive the problem-wise reporting reference and final HV:
 
 ```bash
-python reproducibility/benchmark/summarize_full_experiment.py \
+python experiments/benchmark/summarize_full_experiment.py \
   --output-root full_results --archive all118
-python reproducibility/benchmark/summarize_full_experiment.py \
+python experiments/benchmark/summarize_full_experiment.py \
   --output-root full_results --archive family108
 ```
 

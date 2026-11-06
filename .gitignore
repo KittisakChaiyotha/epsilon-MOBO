@@ -8,7 +8,7 @@ demo_results/
 demo_summary.txt
 demo_summary.csv
 demo_timing.txt
-reproducibility/benchmark/fresh_results/
+experiments/benchmark/fresh_results/
 scratch_check/
 full_results/
 .DS_Store

@@ -28,7 +28,7 @@ def holm_adjust(p_values: np.ndarray) -> np.ndarray:
 
 def main() -> None:
     if not DATA.exists():
-        raise SystemExit(f"Missing saved family-HV data: {DATA}. See reproducibility/README.md")
+        raise SystemExit(f"Missing saved family-HV data: {DATA}. See experiments/README.md")
     d = pd.read_csv(DATA)
     if len(d) != 58_320 or d.duplicated(["problem", "q", "family", "method", "rep"]).any():
         raise ValueError("Expected 58,320 unique run-level final-HV values")

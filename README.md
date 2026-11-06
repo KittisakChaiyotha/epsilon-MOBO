@@ -22,6 +22,7 @@ epsilon-MOBO/
 ├── run_demo.py                   # experiment runner, HV summary and timing
 ├── requirements.txt              # Python dependencies
 ├── tests/test_demo.py            # numerical and reporting checks
+├── experiments/                 # nine-problem rerun and saved-result checks
 ├── .gitignore                    # excludes locally generated results
 └── README.md
 ~~~
@@ -200,6 +201,6 @@ being included in the repository.
 
 ---
 
-## Saved-result audit status
+## Experiments and saved-result checks
 
-The [reproducibility folder](reproducibility/README.md) contains the preserved modified car cab evaluator and scripts for checking selected saved-result summaries. Run-level data and the verified final experiment runner have not yet been published there. The KNO1 demonstration in this README remains separate from the full manuscript experiment.
+The [experiments folder](experiments/README.md) contains the nine benchmark definitions, a **fresh** 118-method, nine-problem runner for q=1,2,4, the modified car cab evaluator, and scripts for checking selected saved-result summaries. See its README for commands and data requirements. The fresh runner has not been established as the historical runner that produced the manuscript's results; the original run-level data and verified final runner have not been published. The KNO1 demonstration described above remains separate from the full manuscript experiment.

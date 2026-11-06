@@ -16,6 +16,6 @@ jobs:
       - run: python -m unittest discover -s tests -v
       - run: python run_demo.py --problems KNO1 --methods eps-qpots eps-tsemo eps-ucb parego greedy-mean greedy-std greedy-ms --criteria HVC --modes PFexp --repetitions 1 --q 1 --total-evals 22 --population 12 --generations 2 --output-root "$RUNNER_TEMP/epsilon-mobo"
       - run: python run_demo.py --summary-only --output-root "$RUNNER_TEMP/epsilon-mobo"
-      - run: python reproducibility/benchmark/verify_test_functions.py
-      - run: python reproducibility/benchmark/run_full_experiment.py --list-tasks
-      - run: python reproducibility/benchmark/run_full_experiment.py --problem vlmop3 --q 2 --method-key qpots --rep 0 --total-evals 23 --population 12 --generations 2 --output-root "$RUNNER_TEMP/nine-problem-smoke"
+      - run: python experiments/benchmark/verify_test_functions.py
+      - run: python experiments/benchmark/run_full_experiment.py --list-tasks
+      - run: python experiments/benchmark/run_full_experiment.py --problem vlmop3 --q 2 --method-key qpots --rep 0 --total-evals 23 --population 12 --generations 2 --output-root "$RUNNER_TEMP/nine-problem-smoke"
