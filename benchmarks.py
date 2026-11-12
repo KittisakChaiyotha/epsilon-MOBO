@@ -40,7 +40,7 @@ class Benchmark:
         x1, x2 = points[..., 0], points[..., 1]
         if self.name == "KNO1":
             summation = x1 + x2
-            radius = 9 - (3 * np.sin(2.5 * summation**2)
+            radius = 9 - (3 * np.sin(2.5 * np.sqrt(summation))
                           + 3 * np.sin(4 * summation)
                           + 5 * np.sin(2 * summation + 2))
             phi = np.pi / 12 * (x1 - x2 + 3)

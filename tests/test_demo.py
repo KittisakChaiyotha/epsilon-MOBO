@@ -2,6 +2,7 @@
 
 import csv
 import json
+import math
 import tempfile
 import time
 import unittest
@@ -25,6 +26,12 @@ class DemoTests(unittest.TestCase):
         r = 9 - 5 * np.sin(2)
         np.testing.assert_allclose(kno.evaluate([[0., 0.]])[0],
                                    [20 - r / np.sqrt(2), 20 - r / np.sqrt(2)])
+        # The nonzero anchor distinguishes sqrt(x1+x2) from (x1+x2)**2.
+        radius = 9 - (3 * math.sin(2.5 * math.sqrt(2))
+                      + 3 * math.sin(8) + 5 * math.sin(6))
+        expected = [20 - radius / math.sqrt(2)] * 2
+        np.testing.assert_allclose(kno.evaluate([[1., 1.]])[0], expected,
+                                   rtol=0, atol=1e-12)
         x1, y1 = initial_design(kno, 1234)
         x2, y2 = initial_design(kno, 1234)
         np.testing.assert_array_equal(x1, x2)
