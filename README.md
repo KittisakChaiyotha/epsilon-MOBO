@@ -5,7 +5,10 @@ Supplementary code repository for peer-review reproducibility verification.
 This repository accompanies the manuscript *ε-MOBO: Epsilon-greedy acquisition
 strategies for multi-objective Bayesian optimization*. It provides an
 executable demonstration of the proposed ε-greedy methods and their fixed
-comparators on the deterministic KNO1 benchmark. All **22 method
+comparators on the deterministic KNO1 benchmark. The demo's KNO1 objective
+formula matches the archived nine-problem definition in
+[`experiments/benchmark/test_functions.py`](experiments/benchmark/test_functions.py):
+the first sine term uses `sqrt(x1+x2)`. All **22 method
 configurations** are evaluated from paired initial designs. The reduced
 evaluation budget makes the implementation accessible for independent
 inspection; the demonstration is distinct from the manuscript's full
@@ -21,7 +24,7 @@ epsilon-MOBO/
 ├── methods.py                    # GP models, acquisition and batch-selection methods
 ├── run_demo.py                   # experiment runner, HV summary and timing
 ├── requirements.txt              # Python dependencies
-├── tests/test_demo.py            # numerical and reporting checks
+├── tests/                       # KNO1, reporting, and RE91 evaluator checks
 ├── experiments/                 # nine-problem experiment and car cab evaluator
 ├── .gitignore                    # excludes locally generated results
 └── README.md
@@ -102,7 +105,11 @@ For each repetition, the script creates the same initial observations for all
 methods. It then fits the GP models, selects a batch, evaluates KNO1, records
 the HV after each evaluation, and summarizes the final HV across repetitions.
 The internal BoTorch calculations use maximization values; the recorded
-objectives and HV report use minimization values.
+objectives and HV report use minimization values. Matching this objective
+formula does not imply that the shorter demo reproduces the manuscript's
+saved observations or hypervolume values. The final experimental source
+requires a separate provenance check, as described in
+[`FRESH_EXPERIMENT.md`](experiments/benchmark/FRESH_EXPERIMENT.md).
 
 ### Methods evaluated
 
@@ -140,19 +147,18 @@ each of seven ε values, plus six fixed comparators.
 ## Expected Output
 
 While running, the terminal reports each completed method and its elapsed
-time. After all runs, it prints the final HV table. The KNO1 rows below come
-from one local run; values may vary by software version and times by computer:
+time. After all runs, it prints the final HV table in this format:
 
 ~~~text
 Running 22 methods on 1 problem; 2 paired repetitions.
-KNO1    qPOTS                                  run=1 final HV=204.367385 time=00:00:10.7
+KNO1    qPOTS                                  run=1 final HV=<computed value> time=<elapsed time>
 ...
 ε-MOBO — FINAL HV SUMMARY (higher is better)
 q=2; total evaluations=23 (including 21 LHS); paired repetitions=2; ε=[0.1]
 
 Problem  Method                         Mean ± SD of final HV  Run 1  Run 2
-KNO1     qPOTS                      201.562431 ± 3.966803  204.367385  198.757478
-KNO1     ε-qPOTS-HVI-PF (ε=0.1)     200.594663 ± 2.598172  202.431847  198.757478
+KNO1     qPOTS                      <computed values for paired runs>
+KNO1     ε-qPOTS-HVI-PF (ε=0.1)     <computed values for paired runs>
 ...
 Total wall time (all sessions): <depends on the computer>
 Full timing breakdown: .../demo_timing.txt
@@ -189,10 +195,12 @@ cumulative runtime report. The KNO1 reporting reference is defined here.
 
 Specifies the Python packages needed to run the demonstration.
 
-### tests/test_demo.py
+### tests/
 
-Checks the KNO1 implementation, the method grid, the hypervolume summary and
-the timing calculations without requiring a full optimization run.
+Checks the KNO1 implementation at a nonzero analytical anchor, the method grid,
+the hypervolume summary, the timing calculations, and the RE91 evaluator's
+third-objective coefficient, nominal evaluation, and seeded noise. The CI
+workflow runs these checks without requiring a full optimization run.
 
 ### .gitignore
 

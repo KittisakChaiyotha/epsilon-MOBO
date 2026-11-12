@@ -4,10 +4,11 @@ This folder now contains all nine deterministic minimization test functions:
 KNO1, VLMOP2, VLMOP3, OKA1, OKA2, DTLZ1a, DTLZ2a, DTLZ4a and DTLZ7a.
 `test_functions.py` is copied byte for byte from an archived benchmark
 definition supplied with the earlier q=1 study. It has the problem-specific
-bounds, dimensions, and complete objective formulas. Its KNO1 formula uses
-`sqrt(x1+x2)` in the first sine term, whereas the root KNO1 *demo* currently
-uses `(x1+x2)**2`. Keep their results separate until that discrepancy is
-resolved against the final experimental source and saved observations.
+bounds, dimensions, and complete objective formulas. The root KNO1 demo now
+uses the same `sqrt(x1+x2)` first sine term, with a nonzero numerical test to
+guard against reverting to `(x1+x2)**2`. Agreement with this archived
+definition does not establish the identity of the final experimental source
+and its saved observations; that provenance requires separate verification.
 
 `run_full_experiment.py` is a **new runner for a fresh study** built on the
 repository's public `methods.py`. It is not a recovered snapshot of the final
