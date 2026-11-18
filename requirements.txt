@@ -1,7 +1,7 @@
-# Python 3.11 is recommended. Install CPU/GPU PyTorch appropriate for your machine.
-numpy>=1.26,<3
-scipy>=1.11,<2
-torch>=2.2,<3
-gpytorch>=1.11,<2
-botorch>=0.15,<1
-pymoo>=0.6,<0.7
+# Python 3.10.20; software versions recorded in the LANTA experiment metadata.
+numpy==1.26.4
+scipy==1.12.0
+torch==2.12.1
+gpytorch==1.15.2
+botorch==0.16.1
+pymoo==0.6.1.6

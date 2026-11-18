@@ -23,7 +23,8 @@ epsilon-MOBO/
 ├── benchmarks.py                 # KNO1 objective functions and bounds
 ├── methods.py                    # GP models, acquisition and batch-selection methods
 ├── run_demo.py                   # experiment runner, HV summary and timing
-├── requirements.txt              # Python dependencies
+├── requirements.txt              # Package versions recorded for the experiments
+├── .python-version               # Python 3.10.20
 ├── tests/                       # KNO1, reporting, and RE91 evaluator checks
 ├── experiments/                 # nine-problem experiment and car cab evaluator
 ├── .gitignore                    # excludes locally generated results
@@ -34,20 +35,27 @@ epsilon-MOBO/
 
 ## Requirements
 
-Python **3.11** is recommended. Install the packages from this folder:
+Use Python **3.10.20**, matching the software configuration recorded in the
+LANTA experiment metadata and listed in the manuscript. The repository's
+`.python-version`, pinned requirements and CI workflow use this same configuration.
+Install the packages from this folder:
 
 ~~~bash
 python -m pip install -r requirements.txt
 ~~~
 
-| Package | Purpose |
-|---|---|
-| NumPy, SciPy | Arrays, Latin hypercube sampling and numerical routines |
-| PyTorch, GPyTorch, BoTorch | Gaussian process models, posterior sampling and ParEGO |
-| pymoo | NSGA-II approximation of the surrogate Pareto set |
+| Software | Version | Purpose |
+|---|---|---|
+| Python | 3.10.20 | Interpreter |
+| NumPy | 1.26.4 | Arrays and numerical operations |
+| SciPy | 1.12.0 | Sampling and numerical routines |
+| PyTorch | 2.12.1 | Tensor operations |
+| GPyTorch | 1.15.2 | Gaussian process inference |
+| BoTorch | 0.16.1 | GP models, posterior sampling and ParEGO |
+| pymoo | 0.6.1.6 | NSGA-II approximation of the surrogate Pareto set |
 
-Install a PyTorch build suitable for your computer if the standard installation
-does not work. No benchmark data download is required.
+Use a PyTorch 2.12.1 build suitable for your hardware. The CI smoke test uses
+the CPU build of the same release. No benchmark data download is required.
 
 ---
 
@@ -193,7 +201,8 @@ cumulative runtime report. The KNO1 reporting reference is defined here.
 
 ### requirements.txt
 
-Specifies the Python packages needed to run the demonstration.
+Pins the package versions recorded in the LANTA experiment metadata. The
+interpreter version is specified in `.python-version`.
 
 ### tests/
 

@@ -1,5 +1,9 @@
 # Experiments for ε-MOBO
 
+Use the repository's Python **3.10.20** environment and pinned
+[`requirements.txt`](../requirements.txt). The software versions are the same as those
+listed in the manuscript and the repository-root README.
+
 This folder contains the nine benchmark objective functions, code for running the 118-method benchmark grid, a script for computing reporting references and final hypervolumes from the **new run's raw observations**, and the car cab objective evaluator. The repository-root KNO1 demonstration uses a smaller budget.
 
 ## Benchmark experiment

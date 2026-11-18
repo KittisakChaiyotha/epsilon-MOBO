@@ -1,5 +1,9 @@
 # Nine-problem benchmark rerun
 
+Use the repository's Python **3.10.20** environment and pinned
+[`requirements.txt`](../../requirements.txt). The software versions are the same as those
+listed in the manuscript and the repository-root README.
+
 This folder now contains all nine deterministic minimization test functions:
 KNO1, VLMOP2, VLMOP3, OKA1, OKA2, DTLZ1a, DTLZ2a, DTLZ4a and DTLZ7a.
 `test_functions.py` is copied byte for byte from an archived benchmark

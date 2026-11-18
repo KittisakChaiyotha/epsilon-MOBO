@@ -10,9 +10,26 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.10.20'
           cache: pip
+      - name: Install the CPU build for the recorded PyTorch release
+        run: python -m pip install torch==2.12.1 --index-url https://download.pytorch.org/whl/cpu
       - run: python -m pip install -r requirements.txt
+      - name: Verify the recorded software configuration
+        run: |
+          python - <<'PY'
+          import sys
+          from importlib.metadata import version
+          assert sys.version_info[:3] == (3, 10, 20), sys.version
+          expected = {
+              "numpy": "1.26.4", "scipy": "1.12.0", "torch": "2.12.1",
+              "gpytorch": "1.15.2", "botorch": "0.16.1", "pymoo": "0.6.1.6",
+          }
+          for package, wanted in expected.items():
+              installed = version(package)
+              assert installed.split("+", 1)[0] == wanted, (package, installed, wanted)
+              print(f"{package}=={installed}")
+          PY
       - name: Test demo outputs and RE91 evaluator
         run: python -m unittest discover -s tests -v
       - run: python run_demo.py --problems KNO1 --methods eps-qpots eps-tsemo eps-ucb parego greedy-mean greedy-std greedy-ms --criteria HVC --modes PFexp --repetitions 1 --q 1 --total-evals 22 --population 12 --generations 2 --output-root "$RUNNER_TEMP/epsilon-mobo"
