@@ -35,10 +35,9 @@ epsilon-MOBO/
 
 ## Requirements
 
-Use Python **3.10.20**, matching the software configuration recorded in the
-LANTA experiment metadata and listed in the manuscript. The repository's
-`.python-version`, pinned requirements and CI workflow use this same configuration.
-Install the packages from this folder:
+Use Python **3.10.20** with the package versions listed below.
+The `.python-version` file, `requirements.txt` and CI workflow specify
+this configuration. Install the packages from this folder:
 
 ~~~bash
 python -m pip install -r requirements.txt
@@ -201,8 +200,8 @@ cumulative runtime report. The KNO1 reporting reference is defined here.
 
 ### requirements.txt
 
-Pins the package versions recorded in the LANTA experiment metadata. The
-interpreter version is specified in `.python-version`.
+Specifies the package versions required by the supplied Python code.
+The interpreter version is specified in `.python-version`.
 
 ### tests/
 

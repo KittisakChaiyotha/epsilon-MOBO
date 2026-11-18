@@ -1,4 +1,4 @@
-# Python 3.10.20; software versions recorded in the LANTA experiment metadata.
+# Python 3.10.20; package versions for the supplied Python code.
 numpy==1.26.4
 scipy==1.12.0
 torch==2.12.1
