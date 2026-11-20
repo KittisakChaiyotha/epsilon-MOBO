@@ -12,12 +12,28 @@ import numpy as np
 
 from benchmarks import BENCHMARKS
 from run_demo import (CRITERIA, GROUPS, MODES, REPORTING_REFERENCES,
+                      configuration, main, parse_args,
                       hypervolume_2d, initial_design, method_specs,
                       result_path, show_total_timing, timing_checkpoint,
                       timing_report, write_summary)
 
 
 class DemoTests(unittest.TestCase):
+    def test_resume_rejects_different_method_code(self):
+        with tempfile.TemporaryDirectory() as temp:
+            argv = ["--methods", "ucb", "--q", "2", "--total-evals", "23",
+                    "--output-root", temp]
+            args = parse_args(argv)
+            specs = method_specs(args.methods, args.criteria, args.modes, args.epsilons)
+            config = configuration(args, specs)
+            self.assertEqual(len(config["method_code_sha256"]), 64)
+            config["method_code_sha256"] = "different-selection-code"
+            results = Path(temp) / "demo_results"
+            results.mkdir()
+            (results / "demo_config.json").write_text(json.dumps(config), encoding="utf-8")
+            with self.assertRaisesRegex(SystemExit, "different settings"):
+                main(argv)
+
     def test_paper_benchmarks(self):
         self.assertEqual(set(BENCHMARKS), {"KNO1"})
         kno = BENCHMARKS["KNO1"]
@@ -108,3 +124,4 @@ class DemoTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

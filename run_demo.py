@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import random
 import time
@@ -227,6 +228,8 @@ def run_one(core, torch, problem: Benchmark, spec: MethodSpec, run: int,
                 reference=reference, initial_n=problem.initial_n,
                 seed=seed, problem=problem.name, method=spec.key,
                 q=args.q, total_evals=args.total_evals,
+                method_code_version=core.CODE_VERSION,
+                method_code_sha256=hashlib.sha256((HERE / "methods.py").read_bytes()).hexdigest(),
                 elapsed_seconds=time.monotonic() - start)
 
 
@@ -242,6 +245,7 @@ def configuration(args, specs: list[MethodSpec]) -> dict:
                 repetitions=args.repetitions, epsilons=args.epsilons,
                 population=args.population, generations=args.generations,
                 seed=args.seed, initial_n=21,
+                method_code_sha256=hashlib.sha256((HERE / "methods.py").read_bytes()).hexdigest(),
                 references={k: list(REPORTING_REFERENCES[k]) for k in args.problems},
                 objective_sense="minimize", demo=True)
 
@@ -456,3 +460,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
