@@ -298,8 +298,8 @@ def _hvc_selection(Y: torch.Tensor, q: int,
                    ref_point: Optional[torch.Tensor] = None) -> torch.Tensor:
     """Select one point at a time, recomputing exclusive HVC after removal.
 
-    Normalize once over the original candidate set, as specified in the
-    manuscript. The remaining nondominated set changes after each pick.
+    Normalize once over the original candidate set and keep the reference
+    fixed. The remaining nondominated set changes after each pick.
     References: [zitzler1999hypervolume, beume2007smsemoa].
     """
     M = Y.shape[0]
