@@ -138,6 +138,14 @@ decision space. ε-TSEMO instead switches between a single spectral posterior
 path and an average of paths, so it has no PF/DS option. HVC selects batch
 members sequentially.
 
+In the supplied code, `methods.py::_hvc_selection()` computes exact HV
+differences, selects one candidate, removes it, and recomputes the
+contributions on the remaining candidates. Normalization bounds and the
+reference vector stay fixed throughout batch construction. The demo and
+`experiments/benchmark/run_full_experiment.py` use this same function.
+The car cab folder supplies the objective evaluator; a nine-objective
+Sobol-QMC HVC selection implementation is outside the supplied code.
+
 The demo settings do **not** reproduce the full nine-problem, 20-repetition
 experiment in the paper. Running more ε values or using the manuscript budget
 takes substantially longer. To inspect that grid on KNO1, use:
