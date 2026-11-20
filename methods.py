@@ -3,13 +3,14 @@
 The GP and acquisition code uses maximization internally. ``run_demo.py``
 negates the deterministic minimization objectives once before fitting and
 retains their original values for reporting hypervolume. Batch selection
-supports HVI, sequential HVC, and decision-space maximin.
+supports sequential HVI, initial-front HVC, and decision-space maximin.
 
 Requires BoTorch, GPyTorch, PyTorch, NumPy, pymoo, and SciPy.
 """
 
 import numpy as np
 import torch
+from scipy.stats.qmc import Sobol
 from enum import Enum
 from typing import List, Optional
 
@@ -20,8 +21,11 @@ DTYPE = torch.double
 
 # Version tag embedded in every result file for provenance checking.
 # Bump whenever algorithmic behavior changes.
-CODE_VERSION = "batch-q1248-v4.7-kno1-demo-sequential-hvc-2026-10-20"
+CODE_VERSION = "batch-q1248-v4.8-hvc-2026-11-20"
 GP_FIT_POLICY = "singletaskgp-defaults-except-matern52-10-attempts-best-per-objective-flexible-nobj"
+HV_EXACT_MAX_NOBJ = 3
+HV_QMC_SAMPLES = 4096
+HV_QMC_ARCHIVE_CHUNK = 32
 
 
 def log(msg: str) -> None:
@@ -296,44 +300,93 @@ def _maximin_from_observed(
 
 def _hvc_selection(Y: torch.Tensor, q: int,
                    ref_point: Optional[torch.Tensor] = None) -> torch.Tensor:
-    """Select one point at a time, recomputing exclusive HVC after removal.
+    """Select a batch using contributions to the original candidate front.
 
-    Normalize once over the original candidate set, as specified in the
-    manuscript. The remaining nondominated set changes after each pick.
+    Normalize the original candidates once and keep that front and reference
+    fixed while scoring every candidate. Select the largest initial exclusive
+    contributions without recomputing scores after individual selections.
+    Use exact HV through three objectives and shared-base Sobol QMC above
+    that threshold.
     References: [zitzler1999hypervolume, beume2007smsemoa].
     """
+    if Y.ndim != 2:
+        raise ValueError("HVC input must be a 2-D tensor")
     M = Y.shape[0]
     if M == 0 or q <= 0:
         return torch.empty(0, dtype=torch.long, device=Y.device)
+    if M <= q:
+        return torch.arange(M, dtype=torch.long, device=Y.device)
+    if not torch.isfinite(Y).all():
+        raise RuntimeError("HVC received NaN/Inf candidate values")
 
-    # Scale-invariant HVC: normalize the candidate front to [0,1]^K first.
-    # HVC depends on scale: objectives with larger numeric ranges can
-    # dominate the contributions. Normalize the candidate front first.
     Y_min = Y.min(dim=0).values
     Y_rng = (Y.max(dim=0).values - Y_min).clamp(min=1e-12)
     Y = (Y - Y_min) / Y_rng
     if ref_point is None:
         # MAXIMIZATION convention (BoTorch): ref must be dominated by all
         # points, i.e. BELOW the (now normalized) front.
-        ref_point = -0.1 * torch.ones(Y.shape[1], dtype=Y.dtype)
+        ref_point = -0.1 * torch.ones(
+            Y.shape[1], dtype=Y.dtype, device=Y.device
+        )
     else:
-        ref_point = (ref_point - Y_min) / Y_rng
+        ref_point = (
+            ref_point.to(dtype=Y.dtype, device=Y.device) - Y_min
+        ) / Y_rng
 
-    remaining = torch.where(is_non_dominated(Y))[0].tolist()
-    selected: list[int] = []
-    for _ in range(min(q, len(remaining))):
-        current = Y[remaining]
-        hv_total = _hypervolume_max(current, ref_point)
-        contributions = [
-            hv_total - _hypervolume_max(
-                current[torch.arange(len(remaining), device=Y.device) != pos],
-                ref_point,
+    nd_mask = is_non_dominated(Y)
+    nd_idx = torch.where(nd_mask)[0]
+    front = Y[nd_mask]
+    if front.shape[0] == 0:
+        raise RuntimeError("HVC received no non-dominated candidate")
+
+    contributions = torch.zeros(M, dtype=Y.dtype, device=Y.device)
+    if Y.shape[1] <= HV_EXACT_MAX_NOBJ:
+        hv_total = _hypervolume_max(front, ref_point)
+        for pos, idx in enumerate(nd_idx):
+            keep = torch.arange(front.shape[0], device=Y.device) != pos
+            contributions[idx] = hv_total - _hypervolume_max(
+                front[keep], ref_point
             )
-            for pos in range(len(remaining))
-        ]
-        best_position = max(range(len(remaining)), key=contributions.__getitem__)
-        selected.append(remaining.pop(best_position))
-    return torch.tensor(selected, dtype=torch.long, device=Y.device)
+    else:
+        seed = int(torch.randint(0, 2**31 - 1, (1,)).item())
+        contributions[nd_idx] = _hvc_contributions_qmc(front, ref_point, seed)
+
+    return contributions.topk(min(q, M)).indices
+
+
+def _hvc_contributions_qmc(
+    front: torch.Tensor, ref_point: torch.Tensor, seed: int
+) -> torch.Tensor:
+    """Exclusive contributions using one shared scrambled Sobol base set.
+
+    Internal values use maximization. For each candidate, the covering set
+    contains all other vectors in the fixed non-dominated candidate front.
+    """
+    engine = Sobol(d=front.shape[1], scramble=True, seed=seed)
+    base = torch.as_tensor(
+        engine.random(HV_QMC_SAMPLES), dtype=front.dtype, device=front.device
+    )
+    contributions = torch.zeros(
+        front.shape[0], dtype=front.dtype, device=front.device
+    )
+    for pos in range(front.shape[0]):
+        side = front[pos] - ref_point
+        if bool((side <= 0).any()):
+            continue
+        samples = ref_point + side * base
+        keep = torch.arange(front.shape[0], device=front.device) != pos
+        covering = front[keep]
+        uncovered = torch.ones(
+            HV_QMC_SAMPLES, dtype=torch.bool, device=front.device
+        )
+        for start in range(0, covering.shape[0], HV_QMC_ARCHIVE_CHUNK):
+            block = covering[start:start + HV_QMC_ARCHIVE_CHUNK]
+            covered = (block[:, None, :] >= samples[None, :, :]).all(dim=2).any(dim=0)
+            uncovered &= ~covered
+            if not bool(uncovered.any()):
+                break
+        contributions[pos] = side.prod() * uncovered.to(front.dtype).mean()
+    return contributions
 
 
 def _hypervolume_max(Y: torch.Tensor, ref_point: torch.Tensor) -> float:
@@ -1624,3 +1677,4 @@ if __name__ == "__main__":
     err = check_spectral_kernel_match()
     assert err < 0.02, f"Spectral sampling does NOT match Matern-5/2 (err={err})"
     print("\nOK: SpectralSampler(matern, nu=2.5) reconstructs Matern-5/2.")
+

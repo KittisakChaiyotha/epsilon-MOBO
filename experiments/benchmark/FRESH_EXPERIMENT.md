@@ -19,7 +19,9 @@ repository's public `methods.py`. It is not a recovered snapshot of the final
 runner that produced the manuscript's saved results. It uses 118 method
 configurations, nine problems, q=1,2,4, 20 paired repetitions, 150 total
 evaluations including 11d-1 Latin-hypercube initial designs, and NSGA-II
-population/generations 100/100. The method module implements sequential HVC.
+population/generations 100/100. HVC selects the batch from exclusive
+contributions computed once on the original normalized candidate front.
+HVI updates its temporary archive sequentially after each selection.
 The full grid comprises 63,720 independent method/problem/q/repetition runs.
 The runner stores complete normalized designs and original-scale minimization
 objectives, with a configuration manifest, seed, method label, versions and code
@@ -65,3 +67,4 @@ are **new-run** HV, never the archived manuscript values.
 These commands generate and analyze a new benchmark run. The full grid has not
 been executed in this repository, so the resulting HV values must be reported
 as new-run results rather than as the manuscript's saved numerical results.
+
